@@ -43,6 +43,7 @@
             <th>state</th>
             <th>Email</th>
             <th>phone</th>
+
         </tr>
         </thead>
         <tbody>
@@ -53,12 +54,50 @@
             <td th:text="${user.city}"></td>
             <td th:text="${user.state}"></td>
             <td th:text="${user.phone}"></td>
+
             <td>
                 <form th:action="@{/editUser}" method="post">
                     <input type="hidden" name="userId" th:value="${user.id}" />
-                    <button type="submit" class="btn btn-primary">Edit</button>
+                    <!-- Edit button -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal${user.id}">Edit</button>
+                    <a class="nav-link active" aria-current="page" th:href="@{/edit/{id}(id=${user.id})}">Edit</a>
+
+
+                    <!-- Edit User Modal -->
+                    <div class="modal fade" th:id="'editModal' + ${user.id}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form th:action="@{/editUser}" method="post">
+                                        <input type="hidden" name="userId" th:value="${user.id}" />
+                                        <div class="form-group">
+                                            <label for="firstName">First Name</label>
+                                            <input type="text" class="form-control" id="firstName" name="editedUser.firstName" th:value="${user.firstName}" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="lastName">Last Name</label>
+                                            <input type="text" class="form-control" id="lastName" name="editedUser.lastName" th:value="${user.lastName}" />
+                                        </div>
+                                        <!-- Add other fields as needed -->
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </td>
+            <!-- ... other user data columns ... -->
+
             <td>
                 <form th:action="@{/deleteUser}" method="post">
                     <input type="hidden" name="userId" th:value="${user.id}" />

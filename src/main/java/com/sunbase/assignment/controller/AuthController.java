@@ -9,9 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -73,4 +71,20 @@ public class AuthController {
         model.addAttribute("users", users);
         return "users";
     }
+@PutMapping("/edit")
+public  User update(@RequestBody User user){
+        UserService.saveOrUpdate(user);
+        return user;
+}
+
+    // Handle the delete user POST request
+    //delete the user by id
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+    public void deleteUser(@PathVariable long id) {
+        userService.deleteUser(id);
+    }
+
+        // Redirect to the user list
+
+
 }

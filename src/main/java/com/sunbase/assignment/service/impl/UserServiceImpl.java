@@ -6,27 +6,27 @@ import com.sunbase.assignment.entity.User;
 import com.sunbase.assignment.repo.RoleRepository;
 import com.sunbase.assignment.repo.UserRepository;
 import com.sunbase.assignment.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.codec.AbstractSingleValueEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
     private RoleRepository roleRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+
 
     @Override
     public void saveUser(UserDto userDto) {
@@ -37,22 +37,24 @@ public class UserServiceImpl implements UserService {
         //encrypt the password once we integrate spring security
         //user.setPassword(userDto.getPassword());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        com.sunbase.assignment.entity.Role role = roleRepository.findByName("ROLE_ADMIN");
+        Role role = roleRepository.findByName("ROLE_ADMIN");
         if(role == null){
             role = checkRoleExist();
         }
         user.setRoles(Arrays.asList(role));
-        userRepository.save(user);
+        UserRepository.save((UserDto) user);
     }
 
-    @Override
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    private Role checkRoleExist() {
+        Role role = new Role();
+        role.setName("ROLE_ADMIN");
+        return roleRepository.save(role);
     }
+
 
     @Override
     public List<UserDto> findAllUsers() {
-        List<User> users = userRepository.findAll();
+        List<User> users = (List<User>) userRepository.findAll();
         return users.stream().map((user) -> convertEntityToDto(user))
                 .collect(Collectors.toList());
     }
@@ -66,9 +68,39 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    private Role checkRoleExist() {
-        Role role = new Role();
-        role.setName("ROLE_ADMIN");
-        return roleRepository.save(role);
+    @Override
+    public User updateUser(User user, Long userId) {
+        UserDto userDto = new UserDto();
+        UserDto depDB =  userRepository.findById(userId).get();
+
+        if (Objects.nonNull(userDto.getFirstName()) && !"".equalsIgnoreCase(userDto.getLastName())) {
+            depDB.setFirstName(userDto.getFirstName());
+        }
+
+        if (Objects.nonNull(userDto.getAddress()) && !"".equalsIgnoreCase(userDto.getAddress())) {
+            depDB.setFirstName(userDto.getAddress());
+        }
+
+        if (Objects.nonNull(userDto.getCity()) && !"".equalsIgnoreCase(userDto.getCity())) {
+            depDB.setFirstName(userDto.getCity());
+        }
+        if (Objects.nonNull(userDto.getState()) && !"".equalsIgnoreCase(userDto.getState())) {
+            depDB.setFirstName(userDto.getState());
+        }
+
+        return UserRepository.save(depDB);
+    }
+
+
+
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public void deleteUser(long id) {
+
     }
 }
+

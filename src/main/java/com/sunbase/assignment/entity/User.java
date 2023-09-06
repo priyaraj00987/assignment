@@ -1,5 +1,6 @@
 package com.sunbase.assignment.entity;
 
+import com.sunbase.assignment.dto.UserDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,8 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name="users")
-public class User
-{
+public class User extends UserDto {
     private static final long serialVersionUID = 1L;
 
     @Id
